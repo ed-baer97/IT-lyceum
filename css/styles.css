@@ -355,53 +355,10 @@ img {
   color: var(--muted);
 }
 
-.lesson-layout {
+.article {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
-  gap: 28px;
-  padding-bottom: 80px;
-}
-
-.toc {
-  position: sticky;
-  top: 92px;
-  align-self: start;
-  padding: 18px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(12px);
-}
-
-.toc h2 {
-  margin: 0 0 10px;
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.toc ol {
-  margin: 0;
-  padding-left: 18px;
-}
-
-.toc a {
-  display: inline-block;
-  padding: 4px 0;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-.toc a:hover,
-.toc a.is-active {
-  color: var(--accent-dark);
-}
-
-.article {
+  margin-bottom: 80px;
   padding: 36px 40px 48px;
   border: 1px solid var(--line);
   border-radius: 24px;
@@ -409,6 +366,72 @@ img {
   box-shadow: var(--shadow);
   font-size: 18px;
   line-height: 1.7;
+}
+
+.lesson-intro h1 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 22px 0 8px;
+  padding: 4px 0 12px;
+}
+
+.tab {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px 8px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab:hover {
+  border-color: #b9d6fb;
+  color: var(--ink);
+}
+
+.tab.is-active {
+  border-color: transparent;
+  background: linear-gradient(160deg, var(--sky), var(--accent) 60%, var(--accent-dark));
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(45, 127, 246, 0.28);
+}
+
+.tab-n {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--soft);
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.tab.is-active .tab-n {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+.tab-panel {
+  padding-top: 8px;
 }
 
 .article h1 {
@@ -420,8 +443,8 @@ img {
 }
 
 .article h2 {
-  margin: 42px 0 12px;
-  padding: 8px 0 0 14px;
+  margin: 8px 0 14px;
+  padding: 4px 0 0 14px;
   border-left: 4px solid var(--accent);
   font-family: var(--font-display);
   font-size: 24px;
@@ -463,13 +486,8 @@ img {
 }
 
 @media (max-width: 860px) {
-  .grid,
-  .lesson-layout {
+  .grid {
     grid-template-columns: 1fr;
-  }
-
-  .toc {
-    position: static;
   }
 
   .article {
@@ -504,13 +522,13 @@ img {
   body::before,
   .site-header,
   .crumbs,
-  .toc,
+  .tabs,
   .site-footer {
     display: none !important;
   }
 
-  .lesson-layout {
-    display: block;
+  .tab-panel {
+    display: block !important;
   }
 
   .article {

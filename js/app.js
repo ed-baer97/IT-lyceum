@@ -155,21 +155,110 @@
     });
   }
 
-  function buildToc(article, tocRoot) {
-    const headings = [...article.querySelectorAll("h2")];
-    if (!headings.length) {
-      tocRoot.hidden = true;
-      return;
+  function tabLabel(text) {
+    return text.replace(/^Урок\s+\d+\.\s*/i, "").trim();
+  }
+
+  function activateTab(root, index, scrollTab = true) {
+    const tabs = [...root.querySelectorAll("[data-tab]")];
+    const panels = [...root.querySelectorAll("[data-panel]")];
+    tabs.forEach((tab, i) => {
+      const on = i === index;
+      tab.classList.toggle("is-active", on);
+      tab.setAttribute("aria-selected", on ? "true" : "false");
+      tab.tabIndex = on ? 0 : -1;
+    });
+    panels.forEach((panel, i) => {
+      panel.hidden = i !== index;
+    });
+    const id = tabs[index]?.dataset.tab;
+    if (id && location.hash !== `#${id}`) {
+      history.replaceState(null, "", `#${id}`);
     }
-    tocRoot.hidden = false;
-    const items = headings
-      .map((heading, index) => {
-        const id = heading.id || `chast-${index + 1}`;
-        heading.id = id;
-        return `<li><a href="#${id}">${heading.textContent}</a></li>`;
-      })
-      .join("");
-    tocRoot.querySelector("ol").innerHTML = items;
+    if (scrollTab) {
+      tabs[index]?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+    }
+  }
+
+  function buildTabs(article) {
+    const headings = [...article.querySelectorAll("h2")];
+    if (!headings.length) return;
+
+    const introNodes = [];
+    for (const node of [...article.childNodes]) {
+      if (node === headings[0]) break;
+      introNodes.push(node);
+    }
+
+    const sections = headings.map((heading, index) => {
+      const nodes = [];
+      let node = heading.nextSibling;
+      const stop = headings[index + 1];
+      while (node && node !== stop) {
+        const current = node;
+        node = node.nextSibling;
+        if (current.nodeType === Node.ELEMENT_NODE && current.tagName === "HR") continue;
+        nodes.push(current);
+      }
+      return { heading, nodes };
+    });
+
+    const intro = document.createElement("div");
+    intro.className = "lesson-intro";
+    introNodes.forEach((node) => intro.appendChild(node));
+
+    const tablist = document.createElement("div");
+    tablist.className = "tabs";
+    tablist.setAttribute("role", "tablist");
+    tablist.setAttribute("aria-label", "Темы урока");
+
+    const panels = document.createElement("div");
+    panels.className = "tab-panels";
+
+    sections.forEach((section, index) => {
+      const id = `tema-${index + 1}`;
+      const label = tabLabel(section.heading.textContent);
+      const tab = document.createElement("button");
+      tab.type = "button";
+      tab.className = "tab";
+      tab.id = `tab-${id}`;
+      tab.dataset.tab = id;
+      tab.setAttribute("role", "tab");
+      tab.setAttribute("aria-controls", id);
+      tab.innerHTML = `<span class="tab-n">${index + 1}</span><span>${label}</span>`;
+      tab.addEventListener("click", () => activateTab(article, index));
+      tablist.appendChild(tab);
+
+      const panel = document.createElement("section");
+      panel.className = "tab-panel";
+      panel.id = id;
+      panel.dataset.panel = "";
+      panel.setAttribute("role", "tabpanel");
+      panel.setAttribute("aria-labelledby", tab.id);
+      panel.hidden = index !== 0;
+      panel.appendChild(section.heading);
+      section.nodes.forEach((node) => panel.appendChild(node));
+      panels.appendChild(panel);
+    });
+
+    tablist.addEventListener("keydown", (event) => {
+      const tabs = [...tablist.querySelectorAll("[data-tab]")];
+      const current = tabs.findIndex((tab) => tab.classList.contains("is-active"));
+      if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+      event.preventDefault();
+      const next =
+        event.key === "ArrowRight"
+          ? (current + 1) % tabs.length
+          : (current - 1 + tabs.length) % tabs.length;
+      activateTab(article, next);
+      tabs[next].focus();
+    });
+
+    article.replaceChildren(intro, tablist, panels);
+
+    const fromHash = tablist.querySelector(`[data-tab="${location.hash.slice(1)}"]`);
+    const start = fromHash ? [...tablist.children].indexOf(fromHash) : 0;
+    activateTab(article, start, false);
   }
 
   async function renderLesson() {
@@ -178,7 +267,6 @@
     const lesson = findLesson(subject, params.get("id"));
     const crumbs = document.querySelector("[data-crumbs]");
     const article = document.querySelector("[data-article]");
-    const toc = document.querySelector("[data-toc]");
     const status = document.querySelector("[data-status]");
     if (!klass || !subject || !lesson || !article) {
       if (status) status.textContent = "Урок не найден.";
@@ -201,7 +289,7 @@
       const html = window.marked.parse(replaced);
       article.innerHTML = restoreMath(html, chunks);
       if (status) status.remove();
-      if (toc) buildToc(article, toc);
+      buildTabs(article);
     } catch {
       if (status) {
         status.textContent =
