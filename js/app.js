@@ -133,7 +133,7 @@
           throwOnError: false,
           trust: (ctx) => ctx.command === "\\htmlClass",
           macros: {
-            "\\dm": "\\dfrac{\\htmlClass{addm}{\\htmlClass{addm-hat}{#3}#1}}{#2}",
+            "\\dm": "\\dfrac{\\htmlClass{addm}{#1\\htmlClass{addm-hat}{#3}}}{#2}",
           },
         });
       } catch {

@@ -472,29 +472,31 @@ img {
   padding-top: 0.9em;
 }
 
-/* Дополнительный множитель: число слева сверху от числителя + скобочка */
+/* Дополнительный множитель: скобочка и число справа сверху от числителя */
 .article .katex .addm {
   position: relative;
+  padding-right: 0.78em;
 }
 
 .article .katex .addm-hat {
   position: absolute;
-  left: -0.38em;
-  top: -0.78em;
-  font-size: 0.64em;
+  left: calc(100% - 0.02em);
+  top: -0.52em;
+  font-size: 0.58em;
   line-height: 1;
   font-style: normal;
+  padding-left: 0.4em;
 }
 
-.article .katex .addm-hat::after {
+.article .katex .addm-hat::before {
   content: "";
   position: absolute;
-  left: 0.7em;
-  top: 0.55em;
-  width: 0.62em;
+  left: 0;
+  top: 0.45em;
+  width: 0.46em;
   height: 0;
-  border-top: 1.5px solid currentColor;
-  transform: rotate(50deg);
+  border-top: 1.45px solid currentColor;
+  transform: rotate(48deg);
   transform-origin: left center;
 }
 
