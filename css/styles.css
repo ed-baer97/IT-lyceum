@@ -437,26 +437,25 @@ img {
 }
 
 .article h3 {
-  margin: 28px 0 10px;
+  margin: 32px 0 12px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--line);
   font-size: 20px;
-}
-
-.practice {
-  margin-top: 28px;
-  padding: 4px 18px 8px;
-  border: 1px dashed #b9d6fb;
-  border-radius: 16px;
-  background: var(--soft);
-}
-
-.practice h3 {
-  margin: 14px 0 8px;
-  color: var(--accent-dark);
 }
 
 .article p,
 .article li {
   color: #24364f;
+}
+
+.article ul,
+.article ol {
+  margin: 8px 0 16px;
+  padding-left: 1.4em;
+}
+
+.article li {
+  margin: 6px 0;
 }
 
 .article hr {
@@ -465,10 +464,38 @@ img {
   margin: 32px 0;
 }
 
-.article .katex-display {
+.article .katex-display,
+.article .tex-display {
   margin: 18px 0;
   overflow-x: auto;
   overflow-y: hidden;
+  padding-top: 0.9em;
+}
+
+/* Дополнительный множитель: число слева сверху от числителя + скобочка */
+.article .katex .addm {
+  position: relative;
+}
+
+.article .katex .addm-hat {
+  position: absolute;
+  left: -0.38em;
+  top: -0.78em;
+  font-size: 0.64em;
+  line-height: 1;
+  font-style: normal;
+}
+
+.article .katex .addm-hat::after {
+  content: "";
+  position: absolute;
+  left: 0.7em;
+  top: 0.55em;
+  width: 0.62em;
+  height: 0;
+  border-top: 1.5px solid currentColor;
+  transform: rotate(50deg);
+  transform-origin: left center;
 }
 
 .site-footer {

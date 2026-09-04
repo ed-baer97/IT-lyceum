@@ -124,33 +124,20 @@
       .join("");
   }
 
-  function extractMath(markdown) {
-    const chunks = [];
-    const replaced = markdown
-      .replace(/\$\$([\s\S]+?)\$\$/g, (_, tex) => {
-        const i = chunks.length;
-        chunks.push({ display: true, tex: tex.trim() });
-        return `@@MATH${i}@@`;
-      })
-      .replace(/\$([^$\n]+?)\$/g, (_, tex) => {
-        const i = chunks.length;
-        chunks.push({ display: false, tex: tex.trim() });
-        return `@@MATH${i}@@`;
-      });
-    return { replaced, chunks };
-  }
-
-  function restoreMath(html, chunks) {
-    return html.replace(/@@MATH(\d+)@@/g, (_, index) => {
-      const chunk = chunks[Number(index)];
-      if (!chunk || !window.katex) return chunk?.tex || "";
+  function renderTex(root) {
+    if (!window.katex) return;
+    root.querySelectorAll(".tex, .tex-display").forEach((el) => {
       try {
-        return window.katex.renderToString(chunk.tex, {
-          displayMode: chunk.display,
+        window.katex.render(el.textContent, el, {
+          displayMode: el.classList.contains("tex-display"),
           throwOnError: false,
+          trust: (ctx) => ctx.command === "\\htmlClass",
+          macros: {
+            "\\dm": "\\dfrac{\\htmlClass{addm}{\\htmlClass{addm-hat}{#3}#1}}{#2}",
+          },
         });
       } catch {
-        return chunk.tex;
+        /* keep original text */
       }
     });
   }
@@ -260,16 +247,6 @@
 
     article.replaceChildren(intro, tablist, panels);
 
-    article.querySelectorAll("h3").forEach((heading) => {
-      if (!/реши сам/i.test(heading.textContent || "")) return;
-      const box = document.createElement("div");
-      box.className = "practice";
-      const list = heading.nextElementSibling;
-      heading.replaceWith(box);
-      box.appendChild(heading);
-      if (list) box.appendChild(list);
-    });
-
     const fromHash = tablist.querySelector(`[data-tab="${location.hash.slice(1)}"]`);
     const start = fromHash ? [...tablist.children].indexOf(fromHash) : 0;
     activateTab(article, start, false);
@@ -298,16 +275,14 @@
     try {
       const response = await fetch(lesson.file);
       if (!response.ok) throw new Error("no file");
-      const markdown = await response.text();
-      const { replaced, chunks } = extractMath(markdown);
-      const html = window.marked.parse(replaced);
-      article.innerHTML = restoreMath(html, chunks);
+      article.innerHTML = await response.text();
+      renderTex(article);
       if (status) status.remove();
       buildTabs(article);
     } catch {
       if (status) {
         status.textContent =
-          "Не удалось открыть файл урока. Запустите сайт через GitHub Pages или локальный сервер — браузер не читает .md напрямую с диска.";
+          "Не удалось открыть файл урока. Запустите сайт через GitHub Pages или локальный сервер.";
       }
     }
   }

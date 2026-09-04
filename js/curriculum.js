@@ -13,7 +13,7 @@ window.LYCEUM = {
             {
               id: "povtorenie",
               title: "Повторение за 5 класс",
-              file: "content/6/matematika/povtorenie.md",
+              file: "content/6/matematika/povtorenie.html",
             },
           ],
         },
