@@ -368,6 +368,10 @@ img {
   line-height: 1.7;
 }
 
+.lesson-intro {
+  margin-bottom: 4px;
+}
+
 .lesson-intro h1 {
   margin: 0 0 12px;
   font-family: var(--font-display);
@@ -380,24 +384,23 @@ img {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 22px 0 8px;
-  padding: 4px 0 12px;
+  margin: 18px 0 4px;
+  padding: 0 0 8px;
 }
 
 .tab {
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px 8px 8px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 50%;
   background: #fff;
   color: var(--muted);
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -410,24 +413,7 @@ img {
   border-color: transparent;
   background: linear-gradient(160deg, var(--sky), var(--accent) 60%, var(--accent-dark));
   color: #fff;
-  box-shadow: 0 8px 18px rgba(45, 127, 246, 0.28);
-}
-
-.tab-n {
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--soft);
-  color: var(--accent-dark);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.tab.is-active .tab-n {
-  background: rgba(255, 255, 255, 0.22);
-  color: #fff;
+  box-shadow: 0 8px 16px rgba(45, 127, 246, 0.28);
 }
 
 .tab-panel {
@@ -453,6 +439,19 @@ img {
 .article h3 {
   margin: 28px 0 10px;
   font-size: 20px;
+}
+
+.practice {
+  margin-top: 28px;
+  padding: 4px 18px 8px;
+  border: 1px dashed #b9d6fb;
+  border-radius: 16px;
+  background: var(--soft);
+}
+
+.practice h3 {
+  margin: 14px 0 8px;
+  color: var(--accent-dark);
 }
 
 .article p,

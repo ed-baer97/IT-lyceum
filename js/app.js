@@ -225,9 +225,13 @@
       tab.dataset.tab = id;
       tab.setAttribute("role", "tab");
       tab.setAttribute("aria-controls", id);
-      tab.innerHTML = `<span class="tab-n">${index + 1}</span><span>${label}</span>`;
+      tab.setAttribute("aria-label", label);
+      tab.title = label;
+      tab.textContent = String(index + 1);
       tab.addEventListener("click", () => activateTab(article, index));
       tablist.appendChild(tab);
+
+      section.heading.textContent = `${index + 1}. ${label}`;
 
       const panel = document.createElement("section");
       panel.className = "tab-panel";
@@ -255,6 +259,16 @@
     });
 
     article.replaceChildren(intro, tablist, panels);
+
+    article.querySelectorAll("h3").forEach((heading) => {
+      if (!/реши сам/i.test(heading.textContent || "")) return;
+      const box = document.createElement("div");
+      box.className = "practice";
+      const list = heading.nextElementSibling;
+      heading.replaceWith(box);
+      box.appendChild(heading);
+      if (list) box.appendChild(list);
+    });
 
     const fromHash = tablist.querySelector(`[data-tab="${location.hash.slice(1)}"]`);
     const start = fromHash ? [...tablist.children].indexOf(fromHash) : 0;
